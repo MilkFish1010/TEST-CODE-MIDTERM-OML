@@ -482,6 +482,9 @@ public class GradeCalculatorFrame extends JFrame {
         int result = chooser.showSaveDialog(this);
         if (result == JFileChooser.APPROVE_OPTION) {
             File file = chooser.getSelectedFile();
+            if (!file.getName().toLowerCase().endsWith(".csv")) {
+                file = new File(file.getAbsolutePath() + ".csv");
+            }
             try (PrintWriter pw = new PrintWriter(file)) {
                 String headers = "exam,essay,pvm,java,js";
                 String row = lecExamField.getText() + "," +
@@ -497,6 +500,7 @@ public class GradeCalculatorFrame extends JFrame {
             }
         }
     }
+    
 
     // ----------------- Lab Functionality -----------------
     private List<String> validateLab() {
@@ -707,6 +711,9 @@ public class GradeCalculatorFrame extends JFrame {
         int result = chooser.showSaveDialog(this);
         if (result == JFileChooser.APPROVE_OPTION) {
             File file = chooser.getSelectedFile();
+            if (!file.getName().toLowerCase().endsWith(".csv")) {
+                file = new File(file.getAbsolutePath() + ".csv");
+            }
             try (PrintWriter pw = new PrintWriter(file)) {
                 String headers = "java1,java2,js1,js2,mp1,mp2,mp3,mp3d";
                 String row = labJava1Field.getText() + "," +
@@ -725,6 +732,7 @@ public class GradeCalculatorFrame extends JFrame {
             }
         }
     }
+    
 
     // -------------------- Main Method --------------------
     public static void main(String[] args) {

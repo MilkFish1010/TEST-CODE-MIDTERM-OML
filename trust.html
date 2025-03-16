@@ -19,6 +19,74 @@
       line-height: 1.5;
       padding: 20px;
     }
+
+/* NEW: Two-column layout */
+.body-container {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 30px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Description Sidebar */
+.description-sidebar {
+  background: #f8f9fa;
+  padding: 25px;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  height: fit-content;
+}
+
+.sidebar-image {
+  width: 100%;
+  height: auto;
+  margin: 15px 0;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  display: none;
+}
+.sidebar-image-container {
+  overflow: visible;
+  height: auto;
+}
+.sidebar-image.active {
+  display: block;
+}
+
+/* Instructions */
+.instructions {
+  margin-bottom: 20px;
+}
+
+.instructions h3 {
+  color: #2c3e50;
+  margin-bottom: 10px;
+  font-size: 1.2rem;
+}
+
+.instructions ul {
+  padding-left: 20px;
+  margin-bottom: 15px;
+}
+
+.instructions li {
+  margin-bottom: 8px;
+  font-size: 0.95rem;
+}
+
+@media (max-width: 768px) {
+  .body-container {
+    grid-template-columns: 1fr;
+  }
+  
+  .description-sidebar {
+    order: -1;
+    margin-bottom: 30px;
+  }
+}
+
+
     /* TAB BUTTONS */
     .tab-buttons {
       display: flex;
@@ -321,7 +389,7 @@
       
       <!-- CSV Upload Option for Lab -->
       <p>You can upload CSV file here:</p>
-      <input type="file" id="csvUploadLab" class="file-upload" accept=".csv" onchange="uploadCSVLecture(event)">
+      <input type="file" id="csvUploadLab" class="file-upload" accept=".csv" onchange="uploadCSVLab(event)">
       
         <div class="csv-section">
     <hr><br>
@@ -413,23 +481,71 @@
       <div id="steps-lab" class="steps"></div>
     </div>
   </div>
+  <div class="description-sidebar">
+    <!-- Lecture Image -->
+    <img src="lecture-formula.png" alt="Lecture Grade Formula" 
+         class="sidebar-image active" id="lecture-image">
+    <!-- Lab Image -->
+    <img src="lab-formula.png" alt="Lab Grade Formula" 
+         class="sidebar-image" id="lab-image">
 
+    <div class="instructions">
+      <h3>How to Use the Calculator</h3>
+      <ul>
+        <li>Select between Lecture or Lab calculator using tabs</li>
+        <li>Enter scores in all required fields</li>
+        <li>Use Perfect Score buttons to fill max values</li>
+        <li>Random button generates sample valid scores</li>
+        <li>CSV upload accepts properly formatted grade files</li>
+        <li>Toggle step-by-step calculation as needed</li>
+      </ul>
+
+
+      <div id="lecture-desc">
+
+      <div id="lab-desc" style="display: none;">
+      </div>
+    </div>
+  </div>
   <script>
     /***********************************************************
      *                   TAB NAVIGATION
      ***********************************************************/
     function showTab(tabName) {
-      document.getElementById('tabLecture').classList.remove('active-tab');
-      document.getElementById('tabLab').classList.remove('active-tab');
-      document.getElementById('lecture').classList.remove('active');
-      document.getElementById('lab').classList.remove('active');
-      if (tabName === 'lecture') {
-        document.getElementById('lecture').classList.add('active');
-        document.getElementById('tabLecture').classList.add('active-tab');
-      } else {
-        document.getElementById('lab').classList.add('active');
-        document.getElementById('tabLab').classList.add('active-tab');
-      }
+  // Switch active tabs
+  document.getElementById('tabLecture').classList.remove('active-tab');
+  document.getElementById('tabLab').classList.remove('active-tab');
+  document.getElementById('lecture').classList.remove('active');
+  document.getElementById('lab').classList.remove('active');
+  
+  if (tabName === 'lecture') {
+    document.getElementById('lecture').classList.add('active');
+    document.getElementById('tabLecture').classList.add('active-tab');
+  } else {
+    document.getElementById('lab').classList.add('active');
+    document.getElementById('tabLab').classList.add('active-tab');
+  }
+
+  // Handle sidebar content
+  const lectureImage = document.getElementById('lecture-image');
+  const labImage = document.getElementById('lab-image');
+  const lectureDesc = document.getElementById('lecture-desc');
+  const labDesc = document.getElementById('lab-desc');
+
+  // Reset all sidebar elements
+  lectureImage.classList.remove('active');
+  labImage.classList.remove('active');
+  lectureDesc.style.display = 'none';
+  labDesc.style.display = 'none';
+
+  // Activate correct sidebar elements
+  if (tabName === 'lecture') {
+    lectureImage.classList.add('active');
+    lectureDesc.style.display = 'block';
+  } else {
+    labImage.classList.add('active');
+    labDesc.style.display = 'block';
+  }
     }
 
     /***********************************************************
@@ -627,7 +743,7 @@
         `\\( \\text{PVM: } \\frac{${pvm}}{60} \\times 100 = ${pvmPercent.toFixed(2)}\\% \\)`,
         `\\( \\text{Java: } \\frac{${java}}{40} \\times 100 = ${javaPercent.toFixed(2)}\\% \\)`,
         `\\( \\text{JS: } \\frac{${js}}{40} \\times 100 = ${jsPercent.toFixed(2)}\\% \\)`,
-        `\\( \\text{Average Quizzes: } \\frac{${essayPercent.toFixed(2)} + ${pvmPercent.toFixed(2)} + ${javaPercent.toFixed(2)} + ${jsPercent.toFixed(2)}}{4} = ${prelimQuizzes.toFixed(2)}\\% \\)`,
+        `\\( \\text{Average Quizzes: } \\frac{${essayPercent.toFixed(2)}(essay) + ${pvmPercent.toFixed(2)} + ${javaPercent.toFixed(2)} + ${jsPercent.toFixed(2)}}{4} = ${prelimQuizzes.toFixed(2)}\\% \\)`,
         `\\( \\text{Attendance: } 100 - (${absences} \\times 10) = ${attendance.toFixed(2)}\\% \\)`,
         `\\( \\text{Prelim Class Standing: } (${prelimQuizzes.toFixed(2)}\\% \\times 0.60) + (${attendance.toFixed(2)}\\% \\times 0.40) = ${prelimClassStanding.toFixed(2)}\\% \\)`,
         `\\( \\text{Final Grade: } (${exam} \\times 0.60) + (${prelimClassStanding.toFixed(2)}\\% \\times 0.40) = ${prelimGrade.toFixed(2)} \\)`

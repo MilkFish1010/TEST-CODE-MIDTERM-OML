@@ -360,12 +360,23 @@
         <input type="number" id="lec-js" placeholder="Enter JavaScript score" />
       </div>
       <div class="input-group">
-        <label for="lec-absences">
+        <label>
           <h3>Attendance</h3>
-          Number of Absences (0+)
-          <button type="button" class="perfect-btn" onclick="setPerfect('lec-absences', 0)">Perfect Score Button!</button>
+          Please mark the dates attended:
         </label>
-        <input type="number" id="lec-absences" placeholder="Enter number of absences" />
+        <div>
+          <input type="checkbox" id="lec-attendance-jan27" checked> 
+          <label for="lec-attendance-jan27">Jan 27</label>
+          
+          <input type="checkbox" id="lec-attendance-feb03" checked> 
+          <label for="lec-attendance-feb03">Feb 3</label>
+          
+          <input type="checkbox" id="lec-attendance-feb10" checked> 
+          <label for="lec-attendance-feb10">Feb 10</label>
+          
+          <input type="checkbox" id="lec-attendance-feb17" checked> 
+          <label for="lec-attendance-feb17">Feb 17</label>
+        </div>
       </div>
 
       <!-- Toggle Step-by-Step -->
@@ -459,13 +470,24 @@
         <input type="number" id="lab-mp4" placeholder="Enter MP3 (Docu) score" />
       </div>
       <br>
-      <h3>Attendance</h3>
       <div class="input-group">
-        <label for="lab-absences">
-          Number of Absences (0+)
-          <button type="button" class="perfect-btn" onclick="setPerfect('lab-absences', 0)">Perfect Score Button!</button>
+        <label>
+          <h3>Attendance</h3>
+          Please mark the dates attended:
         </label>
-        <input type="number" id="lab-absences" placeholder="Enter number of absences" />
+        <div>
+          <input type="checkbox" id="lab-attendance-jan27" checked> 
+          <label for="lab-attendance-jan27">Jan 27</label>
+          
+          <input type="checkbox" id="lab-attendance-feb03" checked> 
+          <label for="lab-attendance-feb03">Feb 3</label>
+          
+          <input type="checkbox" id="lab-attendance-feb10" checked> 
+          <label for="lab-attendance-feb10">Feb 10</label>
+          
+          <input type="checkbox" id="lab-attendance-feb17" checked> 
+          <label for="lab-attendance-feb17">Feb 17</label>
+        </div>
       </div>
 
       <!-- Toggle Step-by-Step -->
@@ -660,8 +682,7 @@
         { id: 'lec-essay',    label: 'Essay Score',       min: 0, max: 100 },
         { id: 'lec-pvm',      label: 'PVM Score',         min: 0, max: 60 },
         { id: 'lec-java',     label: 'Java Score',        min: 0, max: 40 },
-        { id: 'lec-js',       label: 'JavaScript Score',  min: 0, max: 40 },
-        { id: 'lec-absences', label: 'Number of Absences',min: 0, max: 100 }
+        { id: 'lec-js',       label: 'JavaScript Score',  min: 0, max: 40 }
       ];
       let errors = [];
       fields.forEach(f => {
@@ -689,7 +710,20 @@
       setValue('lec-pvm', getRandomInt(0, 60));
       setValue('lec-java', getRandomInt(0, 40));
       setValue('lec-js', getRandomInt(0, 40));
-      setValue('lec-absences', getRandomInt(0, 3));
+      const lecCheckboxes = [
+  "lec-attendance-jan27",
+  "lec-attendance-feb03",
+  "lec-attendance-feb10",
+  "lec-attendance-feb17"
+];
+// Randomly decide a number between 0 and 3 absences
+let absencesCount = getRandomInt(0, 3);
+// Shuffle and uncheck the first 'absencesCount' checkboxes
+let shuffled = lecCheckboxes.sort(() => 0.5 - Math.random());
+shuffled.forEach((id, index) => {
+  document.getElementById(id).checked = (index < absencesCount ? false : true);
+});
+
     }
     function calculateLectureGrade() {
       document.getElementById('error-lecture').innerHTML = '';
@@ -710,13 +744,22 @@
       const pvm = parseFloat(document.getElementById('lec-pvm').value);
       const java = parseFloat(document.getElementById('lec-java').value);
       const js = parseFloat(document.getElementById('lec-js').value);
-      const absences = parseInt(document.getElementById('lec-absences').value);
-      if (absences >= 4) {
-        const failStamp = createStamp(0);
-        document.getElementById('error-lecture').innerHTML = '<ul><li>FAIL: Absences are 4 or more.</li></ul>';
-        document.getElementById('error-lecture').appendChild(failStamp);
-        return;
-      }
+      const lecAttendanceCheckboxes = [
+  "lec-attendance-jan27",
+  "lec-attendance-feb03",
+  "lec-attendance-feb10",
+  "lec-attendance-feb17"
+];
+const absences = lecAttendanceCheckboxes.reduce((acc, id) => {
+  return acc + (document.getElementById(id).checked ? 0 : 1);
+}, 0);
+
+if (absences >= 4) {
+  const failStamp = createStamp(0);
+  document.getElementById('error-lecture').innerHTML = '<ul><li>FAIL: Absences are 4 or more.</li></ul>';
+  document.getElementById('error-lecture').appendChild(failStamp);
+  return;
+}
       const essayPercent = (essay / 100) * 100;
       const pvmPercent = (pvm / 60) * 100;
       const javaPercent = (java / 40) * 100;
@@ -790,8 +833,7 @@
         { id: 'lab-mp1', label: 'MP1', min: 0, max: 100 },
         { id: 'lab-mp2', label: 'MP2', min: 0, max: 100 },
         { id: 'lab-mp3', label: 'MP3', min: 0, max: 100 },
-        { id: 'lab-mp4', label: 'MP4', min: 0, max: 100 },
-        { id: 'lab-absences', label: 'Absences', min: 0, max: 100 }
+        { id: 'lab-mp4', label: 'MP4', min: 0, max: 100 }
       ];
       let errors = [];
       fields.forEach(f => {
@@ -822,7 +864,18 @@
       setValue('lab-mp2', getRandomInt(0, 100));
       setValue('lab-mp3', getRandomInt(0, 100));
       setValue('lab-mp4', getRandomInt(0, 100));
-      setValue('lab-absences', getRandomInt(0, 3));
+      const labCheckboxes = [
+  "lab-attendance-jan27",
+  "lab-attendance-feb03",
+  "lab-attendance-feb10",
+  "lab-attendance-feb17"
+];
+let absencesCount = getRandomInt(0, 3);
+let shuffledLab = labCheckboxes.sort(() => 0.5 - Math.random());
+shuffledLab.forEach((id, index) => {
+  document.getElementById(id).checked = (index < absencesCount ? false : true);
+});
+
     }
     function calculateLabGrade() {
       document.getElementById('error-lab').innerHTML = '';
@@ -846,13 +899,22 @@
       const mp2 = parseFloat(document.getElementById('lab-mp2').value);
       const mp3 = parseFloat(document.getElementById('lab-mp3').value);
       const mp4 = parseFloat(document.getElementById('lab-mp4').value);
-      const absences = parseInt(document.getElementById('lab-absences').value);
-      if (absences >= 4) {
-        const failStamp = createStamp(0);
-        document.getElementById('error-lab').innerHTML = '<ul><li>FAIL: Absences are 4 or more.</li></ul>';
-        document.getElementById('error-lab').appendChild(failStamp);
-        return;
-      }
+      const labAttendanceCheckboxes = [
+  "lab-attendance-jan27",
+  "lab-attendance-feb03",
+  "lab-attendance-feb10",
+  "lab-attendance-feb17"
+];
+const absences = labAttendanceCheckboxes.reduce((acc, id) => {
+  return acc + (document.getElementById(id).checked ? 0 : 1);
+}, 0);
+
+if (absences >= 4) {
+  const failStamp = createStamp(0);
+  document.getElementById('error-lab').innerHTML = '<ul><li>FAIL: Absences are 4 or more.</li></ul>';
+  document.getElementById('error-lab').appendChild(failStamp);
+  return;
+}
       const labExam = (java1 * 0.20) + (java2 * 0.30) + (js1 * 0.20) + (js2 * 0.30);
       const labWork = (mp1 + mp2 + mp3 + mp4) / 4;
       const attendance = Math.max(100 - (absences * 10), 0);

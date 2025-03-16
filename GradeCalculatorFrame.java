@@ -59,6 +59,14 @@ public class GradeCalculatorFrame extends JFrame {
 
         // Tabbed Pane for Lecture and Lab Calculators
         JTabbedPane tabbedPane = new JTabbedPane();
+tabbedPane.setFont(new Font("Arial", Font.BOLD, 16));  // Larger font
+UIManager.put("TabbedPane.tabInsets", new Insets(15, 50, 15, 50)); // More padding
+UIManager.put("TabbedPane.tabAreaInsets", new Insets(5, 5, 5, 5)); // Space around tabs
+// Ensuring tabs stretch evenly
+tabbedPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
+tabbedPane.setPreferredSize(new Dimension(800, 600)); // Adjust size as needed
+
+
         tabbedPane.addTab("Lecture Calculator", createLecturePanel());
         tabbedPane.addTab("Lab Calculator", createLabPanel());
         mainPanel.add(tabbedPane, BorderLayout.CENTER);

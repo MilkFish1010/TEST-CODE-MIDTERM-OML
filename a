@@ -1,0 +1,69 @@
+// At the top of your script, define a global variable:
+window.labCalculationInterval = null;
+
+function calculatelabGrade() {
+  // If steps are currently revealing, toggle off (stop further output)
+  if (window.labCalculationInterval) {
+    clearInterval(window.labCalculationInterval);
+    window.labCalculationInterval = null;
+    return;
+  }
+
+  // Clear any previous output and error messages
+  document.getElementById('error-lab').innerHTML = '';
+  const stepContainer = document.getElementById('steps-lab');
+  stepContainer.style.display = 'none';
+  stepContainer.innerHTML = '';
+
+  const errors = validatelab();
+  if (errors.length > 0) {
+    let errHTML = '<ul>';
+    errors.forEach(err => { errHTML += `<li>${err}</li>`; });
+    errHTML += '</ul>';
+    document.getElementById('error-lab').innerHTML = errHTML;
+    return;
+  }
+
+  // Perform your calculations
+  const exam = parseFloat(document.getElementById('lec-exam').value);
+  // ... (rest of your calculation code)
+  const steps = [
+    `\\( \\text{Essay: } \\frac{${essay}}{100} \\times 100 = ${essayPercent.toFixed(2)}\\% \\)`,
+    // ... other steps
+    `\\( \\text{Final Grade: } (${exam} \\times 0.60) + (${prelimClassStanding.toFixed(2)}\\% \\times 0.40) = ${prelimGrade.toFixed(2)} \\)`
+  ];
+
+  // Show step container
+  stepContainer.style.display = 'block';
+  let currentStep = 0;
+
+  // Start revealing steps via setInterval, store its ID globally
+  window.labCalculationInterval = setInterval(() => {
+    if (currentStep < steps.length) {
+      const stepEl = document.createElement('div');
+      stepEl.classList.add('step', 'visible');
+      stepEl.innerHTML = steps[currentStep];
+      stepContainer.appendChild(stepEl);
+      MathJax.typesetPromise([stepEl]);
+      currentStep++;
+    } else {
+      clearInterval(window.labCalculationInterval);
+      window.labCalculationInterval = null;
+      // Final output as before
+      const finalEl = document.createElement('div');
+      finalEl.classList.add('step', 'final-grade', 'visible');
+      finalEl.innerHTML = `Your Final lab Grade: ${prelimGrade.toFixed(1)}`;
+      stepContainer.appendChild(finalEl);
+      if (!Number.isInteger(prelimGrade)) {
+        const roundUp = Math.ceil(prelimGrade);
+        const roundDown = Math.floor(prelimGrade);
+        const roundingEl = document.createElement('div');
+        roundingEl.classList.add('step', 'rounded-info', 'visible');
+        roundingEl.innerHTML = `Rounded Up Standard: ${roundUp}<br>Rounded Down Standard: ${roundDown}`;
+        stepContainer.appendChild(roundingEl);
+      }
+      finalEl.appendChild(createStamp(prelimGrade));
+      MathJax.typesetPromise([finalEl]);
+    }
+  }, 1500);
+}

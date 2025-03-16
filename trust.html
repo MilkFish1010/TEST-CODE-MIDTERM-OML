@@ -5,6 +5,8 @@
   <title>Lecture & Lab Grade Calculator for Programming 2</title>
   <!-- MathJax for LaTeX rendering -->
   <script type="text/javascript" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <!-- Confetti Library -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
   <style>
     /* GLOBAL RESET & BASE STYLING */
     * {
@@ -14,79 +16,102 @@
     }
     body {
       font-family: "Helvetica Neue", Arial, sans-serif;
-      background-color: #3f0f17;
-      color: #333;
+      background: linear-gradient(to bottom, #000000 0%, #1c7019 100%) no-repeat;
+      color: #000000;
       line-height: 1.5;
       padding: 20px;
+      background-image: url('bg.jpg');
+      background-size: cover;
     }
-
-/* NEW: Two-column layout */
-.body-container {
-  display: grid;
-  grid-template-columns: 1fr 300px;
-  gap: 30px;
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-/* Description Sidebar */
-.description-sidebar {
-  background: #f8f9fa;
-  padding: 25px;
-  border-radius: 10px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-  height: fit-content;
-}
-
-.sidebar-image {
-  width: 100%;
-  height: auto;
-  margin: 15px 0;
-  border: 2px solid #ddd;
-  border-radius: 8px;
-  display: none;
-}
-.sidebar-image-container {
-  overflow: visible;
-  height: auto;
-}
-.sidebar-image.active {
-  display: block;
-}
-
-/* Instructions */
-.instructions {
-  margin-bottom: 20px;
-}
-
-.instructions h3 {
-  color: #2c3e50;
-  margin-bottom: 10px;
-  font-size: 1.2rem;
-}
-
-.instructions ul {
-  padding-left: 20px;
-  margin-bottom: 15px;
-}
-
-.instructions li {
-  margin-bottom: 8px;
-  font-size: 0.95rem;
-}
-
-@media (max-width: 768px) {
-  .body-container {
-    grid-template-columns: 1fr;
-  }
-  
-  .description-sidebar {
-    order: -1;
-    margin-bottom: 30px;
-  }
-}
-
-
+    /* Notification styling */
+    #globalNotification {
+      display: none;
+      text-align: center;
+      font-size: 1.5rem;
+      color: #ffffff;
+      background-color: #337730;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 10px;
+    }
+    /* Global buttons container */
+    #globalActions {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    #globalActions button {
+      padding: 12px 30px;
+      border: none;
+      border-radius: 8px;
+      background: linear-gradient(145deg, #ffffff, #f0f0f0);
+      box-shadow: 5px 5px 10px #d9d9d9, -5px -5px 10px #ffffff;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      margin: 5px;
+    }
+    #globalActions button:hover {
+      transform: translateY(-2px);
+      box-shadow: 8px 8px 15px #d9d9d9, -8px -8px 15px #ffffff;
+    }
+    /* The rest of your styles ... */
+    .body-container {
+      display: grid;
+      grid-template-columns: 1fr 300px;
+      gap: 30px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .description-sidebar {
+      background: #dabb58;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      height: fit-content;
+      width: 70%;
+      margin: auto;
+    }
+    .sidebar-image {
+      width: 70%;
+      height: auto;
+      margin: auto;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      display: none;
+    }
+    .sidebar-image-container {
+      overflow: visible;
+      height: auto;
+    }
+    .sidebar-image.active {
+      display: block;
+    }
+    /* Instructions */
+    .instructions {
+      margin-bottom: 20px;
+    }
+    .instructions h3 {
+      color: #000000;
+      margin-bottom: 10px;
+      font-size: 1.2rem;
+    }
+    .instructions ul {
+      padding-left: 20px;
+      margin-bottom: 15px;
+    }
+    .instructions li {
+      margin-bottom: 8px;
+      font-size: 0.95rem;
+    }
+    @media (max-width: 768px) {
+      .body-container {
+        grid-template-columns: 1fr;
+      }
+      .description-sidebar {
+        order: -1;
+        margin-bottom: 30px;
+      }
+    }
     /* TAB BUTTONS */
     .tab-buttons {
       display: flex;
@@ -125,10 +150,9 @@
       max-width: 650px;
       margin: auto;
       padding: 20px;
-      background-color: #f1e893;
-      border: 1px solid #ddd;
+      background: linear-gradient(to bottom, hsl(110, 59%, 82%) 0%, #b6ffa0 100%);
+      border: 1px solid #ffc711;
       border-radius: 6px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
       margin-bottom: 30px;
     }
     .container h2 {
@@ -197,11 +221,11 @@
       background-color: #218838;
     }
     .fard-btn {
-      background-color: #b46c00;
+      background-color: #f19100;
       color: white;
     }
     .fard-btn:hover {
-      background-color: #7c5500;
+      background-color: #a37000;
     }
     /* FILE UPLOAD */
     .file-upload {
@@ -210,7 +234,7 @@
     }
     /* ERROR MESSAGES */
     #error-lecture, #error-lab {
-      color: #d9534f;
+      color: #dd0700;
       font-weight: 500;
       margin-top: 10px;
       text-align: center;
@@ -259,7 +283,7 @@
     .rounded-info {
       margin-top: 6px;
       font-style: italic;
-      color: #555;
+      color: #ffffff;
     }
     /* PASS/FAIL STAMP */
     .stamp {
@@ -283,6 +307,9 @@
       h2 {
         font-size: 1.5rem;
       }
+      .sidebar-image {
+        width: 100%;
+      }
     }
     .stamp.passed {
       color: #28a745;
@@ -303,66 +330,60 @@
       }
     }
     .custom-upload-btn {
-  display: inline-block;
-  padding: 10px 20px;
-  background-color: #6f42c1;
-  color: #fff;
-  border-radius: 4px;
-  cursor: pointer;
-  margin-bottom: 10px;
-}
-
-.custom-upload-btn:hover {
-  background-color: #5a359b;
-}
-
-.upload-status {
-  margin-left: 10px;
-  font-size: 1rem;
-  vertical-align: middle;
-}
-
-.upload-status .checkmark {
-  color: green;
-  font-weight: bold;
-}
-
-.upload-status .error {
-  color: red;
-  font-weight: bold;
-}
-
-
-
+      display: inline-block;
+      padding: 10px 20px;
+      background-color: #295829;
+      color: #1df700;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-bottom: 10px;
+    }
+    .custom-upload-btn:hover {
+      background-color: #d67403;
+    }
+    .upload-status {
+      margin-left: 10px;
+      font-size: 1rem;
+      vertical-align: middle;
+    }
+    .upload-status .checkmark {
+      color: green;
+      font-weight: bold;
+    }
+    .upload-status .error {
+      color: red;
+      font-weight: bold;
+    }
+    h1 {
+      text-align: center;
+      margin: auto;
+      color: rgba(241, 255, 248, 0.836);
+      padding: 10px 20px;
+      background-color: #337730;
+      border-radius: 55px;
+    }
   </style>
 </head>
 <body>
-
+  <h1>😋Programming 2 Prelim Grade Calculator 2025😋</h1>
+  <br>
   <!-- TAB BUTTONS -->
   <div class="tab-buttons">
     <button id="tabLecture" class="active-tab" onclick="showTab('lecture')">Lecture Calculator</button>
     <button id="tabLab" onclick="showTab('lab')">Lab Calculator</button>
   </div>
-
   <!-- LECTURE TAB -->
   <div id="lecture" class="tab-content active">
     <div class="container">
       <h2>Lecture Grade Calculator</h2>
-      
-      <!-- CSV Upload Option for Lecture -->
-       <p>You can upload CSV file here:</p>
-<!-- Lecture CSV Upload -->
-<input type="file" id="csvUploadLecture" class="file-upload" accept=".csv" onchange="uploadCSVLecture(event)" style="display: none;" onclick="document.getElementById('lecture-upload-status').innerHTML='';">
-<label for="csvUploadLecture" class="custom-upload-btn">Upload CSV</label>
-<span id="lecture-upload-status" class="upload-status"></span>
-
-
-
-
-      
-        <div class="csv-section">
-    <hr><br>
-  </div>
+      <p>You can upload CSV file by clicking here:</p>
+      <!-- Lecture CSV Upload -->
+      <input type="file" id="csvUploadLecture" class="file-upload" accept=".csv" onchange="uploadCSVLecture(event)" style="display: none;" onclick="document.getElementById('lecture-upload-status').innerHTML='';">
+      <label for="csvUploadLecture" class="custom-upload-btn">🔼 Upload CSV</label>
+      <span id="lecture-upload-status" class="upload-status"></span>
+      <div class="csv-section">
+        <hr><br>
+      </div>
       <!-- Random Valid Grades (Lecture) -->
       <button type="button" class="random-btn" onclick="setRandomValidLecture()">Random Grade Generator Button</button>
       <br><br>
@@ -413,52 +434,38 @@
         <div>
           <input type="checkbox" id="lec-attendance-jan27" checked> 
           <label for="lec-attendance-jan27">Jan 27</label>
-          
           <input type="checkbox" id="lec-attendance-feb03" checked> 
           <label for="lec-attendance-feb03">Feb 3</label>
-          
           <input type="checkbox" id="lec-attendance-feb10" checked> 
           <label for="lec-attendance-feb10">Feb 10</label>
-          
           <input type="checkbox" id="lec-attendance-feb17" checked> 
           <label for="lec-attendance-feb17">Feb 17</label>
         </div>
       </div>
-
       <!-- Toggle Step-by-Step -->
       <div class="toggle-container">
         <input type="checkbox" id="showStepsLecture" checked />
         <label for="showStepsLecture">Show Step-by-Step Calculation</label>
       </div>
-
       <button class="calculate-btn" onclick="calculateLectureGrade()">Calculate Lecture Grade</button>
       <button class="fard-btn" onclick="downloadLectureCSV()">Download Grade as CSV</button>
       <div id="error-lecture"></div>
-
       <!-- Steps (Lecture) will be rendered in LaTeX -->
       <div id="steps-lecture" class="steps"></div>
     </div>
   </div>
-
   <!-- LAB TAB -->
   <div id="lab" class="tab-content">
     <div class="container">
       <h2>Lab Grade Calculator</h2>
-      
-      <!-- CSV Upload Option for Lab -->
-      <p>You can upload CSV file here:</p>
- <!-- Lab CSV Upload -->
- <input type="file" id="csvUploadLab" class="file-upload" accept=".csv" onchange="uploadCSVLab(event)" style="display: none;" onclick="document.getElementById('lab-upload-status').innerHTML='';">
- <label for="csvUploadLab" class="custom-upload-btn">Upload CSV</label>
- <span id="lab-upload-status" class="upload-status"></span>
- 
-
-
-      
-        <div class="csv-section">
-    <hr><br>
-  </div>
-      
+      <p>You can upload CSV file by clicking here:</p>
+      <!-- Lab CSV Upload -->
+      <input type="file" id="csvUploadLab" class="file-upload" accept=".csv" onchange="uploadCSVLab(event)" style="display: none;" onclick="document.getElementById('lab-upload-status').innerHTML='';">
+      <label for="csvUploadLab" class="custom-upload-btn">Upload CSV</label>
+      <span id="lab-upload-status" class="upload-status"></span>
+      <div class="csv-section">
+        <hr><br>
+      </div>
       <!-- Random Valid Grades (Lab) -->
       <button type="button" class="random-btn" onclick="setRandomValidLab()">Random Grade Generator Button</button>
       <br><br>
@@ -531,100 +538,101 @@
         <div>
           <input type="checkbox" id="lab-attendance-jan27" checked> 
           <label for="lab-attendance-jan27">Jan 27</label>
-          
           <input type="checkbox" id="lab-attendance-feb03" checked> 
           <label for="lab-attendance-feb03">Feb 3</label>
-          
           <input type="checkbox" id="lab-attendance-feb10" checked> 
           <label for="lab-attendance-feb10">Feb 10</label>
-          
           <input type="checkbox" id="lab-attendance-feb17" checked> 
           <label for="lab-attendance-feb17">Feb 17</label>
         </div>
       </div>
-
       <!-- Toggle Step-by-Step -->
       <div class="toggle-container">
         <input type="checkbox" id="showStepsLab" checked />
         <label for="showStepsLab">Show Step-by-Step Calculation</label>
       </div>
-
+      <div id="notification" style="display: none; text-align: center; font-size: 20px; font-weight: bold; padding: 10px; background-color: gold;">
+        Calculate Time! 🤑
+    </div>
+    <button onclick="makePerfect()">Make It Perfect</button>
+    <button onclick="resetGrades()">Reset Grades</button>
+    <button onclick="calculate()">Calculate</button>
+    <canvas id="confetti-canvas"></canvas>
       <button class="calculate-btn" onclick="calculateLabGrade()">Calculate Lab Grade</button>
       <div id="error-lab"></div>
       <button class="fard-btn" onclick="downloadLabCSV()">Download Grade as CSV</button>
-
-
       <!-- Steps (Lab) will be rendered in LaTeX -->
       <div id="steps-lab" class="steps"></div>
     </div>
   </div>
   <div class="description-sidebar">
     <!-- Lecture Image -->
-    <img src="lecture-formula.png" alt="Lecture Grade Formula" 
-         class="sidebar-image active" id="lecture-image">
+    <img src="lecture-formula.png" alt="Lecture Grade Formula" class="sidebar-image active" id="lecture-image">
     <!-- Lab Image -->
-    <img src="lab-formula.png" alt="Lab Grade Formula" 
-         class="sidebar-image" id="lab-image">
-
-    <div class="instructions">
-      <h3>How to Use the Calculator</h3>
-      <ul>
-        <li>Select between Lecture or Lab calculator using tabs</li>
-        <li>Enter scores in all required fields</li>
-        <li>Use Perfect Score buttons to fill max values</li>
-        <li>Random button generates sample valid scores</li>
-        <li>CSV upload accepts properly formatted grade files</li>
-        <li>Toggle step-by-step calculation as needed</li>
-      </ul>
-
-
-      <div id="lecture-desc">
-
-      <div id="lab-desc" style="display: none;">
-      </div>
+    <img src="lab-formula.png" alt="Lab Grade Formula" class="sidebar-image" id="lab-image">
+    <div class="instructions" style="text-align: center;">
+      <br>
+      <h3 style="text-align: center;">Grade Formula</h3>
+      <hr><br>
+      <h3 style="text-align: center;">Instructions</h3>
+      <p>🔃Select between Lecture or Lab calculator using tabs
+        <br><br>
+        ⚖ Enter scores in all required fields
+        <br><br>
+        🌟 Use Perfect Score buttons to fill max values
+        <br><br>
+        🎲 Random button generates sample valid scores
+        <br><br>
+        📁 CSV upload accepts properly formatted grade files
+        <br><br>
+        ➗ Toggle step-by-step calculation as needed</p>
+      <div id="lecture-desc"></div>
+      <div id="lab-desc" style="display: none;"></div>
     </div>
   </div>
-  
-
   <script>
+    // Global interval variables to prevent spamming outputs
+    let currentLectureInterval = null;
+    let currentLabInterval = null;
+
     /***********************************************************
      *                   TAB NAVIGATION
      ***********************************************************/
     function showTab(tabName) {
-  // Switch active tabs
-  document.getElementById('tabLecture').classList.remove('active-tab');
-  document.getElementById('tabLab').classList.remove('active-tab');
-  document.getElementById('lecture').classList.remove('active');
-  document.getElementById('lab').classList.remove('active');
-  
-  if (tabName === 'lecture') {
-    document.getElementById('lecture').classList.add('active');
-    document.getElementById('tabLecture').classList.add('active-tab');
-  } else {
-    document.getElementById('lab').classList.add('active');
-    document.getElementById('tabLab').classList.add('active-tab');
-  }
-
-  // Handle sidebar content
-  const lectureImage = document.getElementById('lecture-image');
-  const labImage = document.getElementById('lab-image');
-  const lectureDesc = document.getElementById('lecture-desc');
-  const labDesc = document.getElementById('lab-desc');
-
-  // Reset all sidebar elements
-  lectureImage.classList.remove('active');
-  labImage.classList.remove('active');
-  lectureDesc.style.display = 'none';
-  labDesc.style.display = 'none';
-
-  // Activate correct sidebar elements
-  if (tabName === 'lecture') {
-    lectureImage.classList.add('active');
-    lectureDesc.style.display = 'block';
-  } else {
-    labImage.classList.add('active');
-    labDesc.style.display = 'block';
-  }
+      // Switch active tabs
+      document.getElementById('tabLecture').classList.remove('active-tab');
+      document.getElementById('tabLab').classList.remove('active-tab');
+      document.getElementById('lecture').classList.remove('active');
+      document.getElementById('lab').classList.remove('active');
+      
+      if (tabName === 'lecture') {
+        document.getElementById('lecture').classList.add('active');
+        document.getElementById('tabLecture').classList.add('active-tab');
+      } else {
+        document.getElementById('lab').classList.add('active');
+        document.getElementById('tabLab').classList.add('active-tab');
+      }
+      
+      // Handle sidebar content
+      const lectureImage = document.getElementById('lecture-image');
+      const labImage = document.getElementById('lab-image');
+      const lectureDesc = document.getElementById('lecture-desc');
+      const labDesc = document.getElementById('lab-desc');
+      
+      // Reset all sidebar elements
+      lectureImage.classList.remove('active');
+      labImage.classList.remove('active');
+      lectureDesc.style.display = 'none';
+      labDesc.style.display = 'none';
+      
+      // Activate correct sidebar elements
+      if (tabName === 'lecture') {
+        lectureImage.classList.add('active');
+        lectureDesc.style.display = 'block';
+      } else {
+        labImage.classList.add('active');
+        labDesc.style.display = 'block';
+      }
     }
 
     /***********************************************************
@@ -656,118 +664,114 @@
       return stamp;
     }
 
-      /***********************************************************
+    /***********************************************************
      *         ENHANCED CSV HANDLING WITH AUTOMATIC CALCULATION
      ***********************************************************/
-     function handleCSV(file, type) {
-  // Determine the status element based on type
-  const statusElem = document.getElementById(type === 'lecture' ? "lecture-upload-status" : "lab-upload-status");
-  
-  // Check file extension
-  if (!file.name.toLowerCase().endsWith('.csv')) {
-    statusElem.innerHTML = `<span class="error">✖ Invalid file format. Please select a CSV file.</span>`;
-    return;
-  }
-  
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    const text = e.target.result;
-    const lines = text.split(/\r?\n/).filter(line => line.trim() !== '');
-    
-    if (lines.length < 2) {
-      statusElem.innerHTML = `<span class="error">✖ CSV must have at least 1 data row.</span>`;
-      return;
-    }
-    
-    // Split header line and data line
-    const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
-    const data = lines[1].split(',').map(d => d.trim());
-    
-    // Expected headers per type
-    let expectedHeaders = [];
-    if (type === 'lecture') {
-      expectedHeaders = ['exam', 'essay', 'pvm', 'java', 'js'];
-    } else {
-      expectedHeaders = ['java1', 'java2', 'js1', 'js2', 'mp1', 'mp2', 'mp3', 'mp3d'];
-    }
-    
-    // Check if all expected headers are present
-    const missing = expectedHeaders.filter(h => !headers.includes(h));
-    if (missing.length > 0) {
-      statusElem.innerHTML = `<span class="error">✖ Missing header(s): ${missing.join(", ")}</span>`;
-      return;
-    }
-    
-    // If everything is valid, update the status element with a check mark and the file name.
-    statusElem.innerHTML = `<span class="checkmark">✔</span> ${file.name}`;
-    
-    // Mapping for populating input fields
-    if (type === 'lecture') {
-      const mapping = {
-        'exam': 'lec-exam',
-        'essay': 'lec-essay',
-        'pvm': 'lec-pvm',
-        'java': 'lec-java',
-        'js': 'lec-js'
-      };
+    function handleCSV(file, type) {
+      // Determine the status element based on type
+      const statusElem = document.getElementById(type === 'lecture' ? "lecture-upload-status" : "lab-upload-status");
       
-      headers.forEach((header, i) => {
-        if (mapping[header] && data[i]) {
-          document.getElementById(mapping[header]).value = data[i];
-        }
-      });
-      calculateLectureGrade();
-    } else {
-      const mapping = {
-        'java1': 'lab-java1',
-        'java2': 'lab-java2',
-        'js1': 'lab-js1',
-        'js2': 'lab-js2',
-        'mp1': 'lab-mp1',
-        'mp2': 'lab-mp2',
-        'mp3': 'lab-mp3',
-        'mp3d': 'lab-mp3d'
-      };
+      // Check file extension
+      if (!file.name.toLowerCase().endsWith('.csv')) {
+        statusElem.innerHTML = `<span class="error">✖ Invalid file format. Please select a CSV file.</span>`;
+        return;
+      }
       
-      headers.forEach((header, i) => {
-        if (mapping[header] && data[i]) {
-          document.getElementById(mapping[header]).value = data[i];
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const text = e.target.result;
+        const lines = text.split(/\r?\n/).filter(line => line.trim() !== '');
+        
+        if (lines.length < 2) {
+          statusElem.innerHTML = `<span class="error">✖ CSV must have at least 1 data row.</span>`;
+          return;
         }
-      });
-      calculateLabGrade();
+        
+        // Split header line and data line
+        const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
+        const data = lines[1].split(',').map(d => d.trim());
+        
+        // Expected headers per type
+        let expectedHeaders = [];
+        if (type === 'lecture') {
+          expectedHeaders = ['exam', 'essay', 'pvm', 'java', 'js'];
+        } else {
+          expectedHeaders = ['java1', 'java2', 'js1', 'js2', 'mp1', 'mp2', 'mp3', 'mp3d'];
+        }
+        
+        // Check if all expected headers are present
+        const missing = expectedHeaders.filter(h => !headers.includes(h));
+        if (missing.length > 0) {
+          statusElem.innerHTML = `<span class="error">✖ Missing header(s): ${missing.join(", ")}</span>`;
+          return;
+        }
+        
+        // If everything is valid, update the status element with a check mark and the file name.
+        statusElem.innerHTML = `<span class="checkmark">✔</span> ${file.name}`;
+        
+        // Mapping for populating input fields
+        if (type === 'lecture') {
+          const mapping = {
+            'exam': 'lec-exam',
+            'essay': 'lec-essay',
+            'pvm': 'lec-pvm',
+            'java': 'lec-java',
+            'js': 'lec-js'
+          };
+          
+          headers.forEach((header, i) => {
+            if (mapping[header] && data[i]) {
+              document.getElementById(mapping[header]).value = data[i];
+            }
+          });
+          calculateLectureGrade();
+        } else {
+          const mapping = {
+            'java1': 'lab-java1',
+            'java2': 'lab-java2',
+            'js1': 'lab-js1',
+            'js2': 'lab-js2',
+            'mp1': 'lab-mp1',
+            'mp2': 'lab-mp2',
+            'mp3': 'lab-mp3',
+            'mp3d': 'lab-mp3d'
+          };
+          
+          headers.forEach((header, i) => {
+            if (mapping[header] && data[i]) {
+              document.getElementById(mapping[header]).value = data[i];
+            }
+          });
+          calculateLabGrade();
+        }
+      };
+      reader.readAsText(file);
     }
-  };
-  reader.readAsText(file);
-}
-
-function uploadCSVLecture(event) {
-  const file = event.target.files[0];
-  if (file) {
-    handleCSV(file, 'lecture');
-    event.target.value = "";  // reset so same file can be uploaded again
-  }
-}
-
-function uploadCSVLab(event) {
-  const file = event.target.files[0];
-  if (file) {
-    handleCSV(file, 'lab');
-    event.target.value = "";
-  }
-}
-
-
+    function uploadCSVLecture(event) {
+      const file = event.target.files[0];
+      if (file) {
+        handleCSV(file, 'lecture');
+        event.target.value = "";
+      }
+    }
+    function uploadCSVLab(event) {
+      const file = event.target.files[0];
+      if (file) {
+        handleCSV(file, 'lab');
+        event.target.value = "";
+      }
+    }
 
     /***********************************************************
      *            LECTURE GRADE CALCULATOR
      ***********************************************************/
     function validateLecture() {
       const fields = [
-        { id: 'lec-exam',     label: 'Exam Score',        min: 0, max: 100 },
-        { id: 'lec-essay',    label: 'Essay Score',       min: 0, max: 100 },
-        { id: 'lec-pvm',      label: 'PVM Score',         min: 0, max: 60 },
-        { id: 'lec-java',     label: 'Java Score',        min: 0, max: 40 },
-        { id: 'lec-js',       label: 'JavaScript Score',  min: 0, max: 40 }
+        { id: 'lec-exam', label: 'Exam Score', min: 0, max: 100 },
+        { id: 'lec-essay', label: 'Essay Score', min: 0, max: 100 },
+        { id: 'lec-pvm', label: 'PVM Score', min: 0, max: 60 },
+        { id: 'lec-java', label: 'Java Score', min: 0, max: 40 },
+        { id: 'lec-js', label: 'JavaScript Score', min: 0, max: 40 }
       ];
       let errors = [];
       fields.forEach(f => {
@@ -796,21 +800,23 @@ function uploadCSVLab(event) {
       setValue('lec-java', getRandomInt(0, 40));
       setValue('lec-js', getRandomInt(0, 40));
       const lecCheckboxes = [
-  "lec-attendance-jan27",
-  "lec-attendance-feb03",
-  "lec-attendance-feb10",
-  "lec-attendance-feb17"
-];
-// Randomly decide a number between 0 and 3 absences
-let absencesCount = getRandomInt(0, 3);
-// Shuffle and uncheck the first 'absencesCount' checkboxes
-let shuffled = lecCheckboxes.sort(() => 0.5 - Math.random());
-shuffled.forEach((id, index) => {
-  document.getElementById(id).checked = (index < absencesCount ? false : true);
-});
-
+        "lec-attendance-jan27",
+        "lec-attendance-feb03",
+        "lec-attendance-feb10",
+        "lec-attendance-feb17"
+      ];
+      let absencesCount = getRandomInt(0, 3);
+      let shuffled = lecCheckboxes.sort(() => 0.5 - Math.random());
+      shuffled.forEach((id, index) => {
+        document.getElementById(id).checked = (index < absencesCount ? false : true);
+      });
     }
     function calculateLectureGrade() {
+      // Clear any existing interval to avoid multiple outputs
+      if (currentLectureInterval !== null) {
+        clearInterval(currentLectureInterval);
+        currentLectureInterval = null;
+      }
       document.getElementById('error-lecture').innerHTML = '';
       const stepContainer = document.getElementById('steps-lecture');
       stepContainer.style.display = 'none';
@@ -830,21 +836,20 @@ shuffled.forEach((id, index) => {
       const java = parseFloat(document.getElementById('lec-java').value);
       const js = parseFloat(document.getElementById('lec-js').value);
       const lecAttendanceCheckboxes = [
-  "lec-attendance-jan27",
-  "lec-attendance-feb03",
-  "lec-attendance-feb10",
-  "lec-attendance-feb17"
-];
-const absences = lecAttendanceCheckboxes.reduce((acc, id) => {
-  return acc + (document.getElementById(id).checked ? 0 : 1);
-}, 0);
-
-if (absences >= 4) {
-  const failStamp = createStamp(0);
-  document.getElementById('error-lecture').innerHTML = '<ul><li>FAIL: Absences are 4 or more.</li></ul>';
-  document.getElementById('error-lecture').appendChild(failStamp);
-  return;
-}
+        "lec-attendance-jan27",
+        "lec-attendance-feb03",
+        "lec-attendance-feb10",
+        "lec-attendance-feb17"
+      ];
+      const absences = lecAttendanceCheckboxes.reduce((acc, id) => {
+        return acc + (document.getElementById(id).checked ? 0 : 1);
+      }, 0);
+      if (absences >= 4) {
+        const failStamp = createStamp(0);
+        document.getElementById('error-lecture').innerHTML = '<ul><li>FAIL: Absences are 4 or more.</li></ul>';
+        document.getElementById('error-lecture').appendChild(failStamp);
+        return;
+      }
       const essayPercent = (essay / 100) * 100;
       const pvmPercent = (pvm / 60) * 100;
       const javaPercent = (java / 40) * 100;
@@ -871,14 +876,14 @@ if (absences >= 4) {
         `\\( \\text{PVM: } \\frac{${pvm}}{60} \\times 100 = ${pvmPercent.toFixed(2)}\\% \\)`,
         `\\( \\text{Java: } \\frac{${java}}{40} \\times 100 = ${javaPercent.toFixed(2)}\\% \\)`,
         `\\( \\text{JS: } \\frac{${js}}{40} \\times 100 = ${jsPercent.toFixed(2)}\\% \\)`,
-        `\\( \\text{Average Quizzes: } \\frac{${essayPercent.toFixed(2)}(essay) + ${pvmPercent.toFixed(2)} + ${javaPercent.toFixed(2)} + ${jsPercent.toFixed(2)}}{4} = ${prelimQuizzes.toFixed(2)}\\% \\)`,
+        `\\( \\text{Average Quizzes: } \\frac{${essayPercent.toFixed(2)} + ${pvmPercent.toFixed(2)} + ${javaPercent.toFixed(2)} + ${jsPercent.toFixed(2)}}{4} = ${prelimQuizzes.toFixed(2)}\\% \\)`,
         `\\( \\text{Attendance: } 100 - (${absences} \\times 10) = ${attendance.toFixed(2)}\\% \\)`,
         `\\( \\text{Prelim Class Standing: } (${prelimQuizzes.toFixed(2)}\\% \\times 0.60) + (${attendance.toFixed(2)}\\% \\times 0.40) = ${prelimClassStanding.toFixed(2)}\\% \\)`,
         `\\( \\text{Final Grade: } (${exam} \\times 0.60) + (${prelimClassStanding.toFixed(2)}\\% \\times 0.40) = ${prelimGrade.toFixed(2)} \\)`
       ];
       stepContainer.style.display = 'block';
       let currentStep = 0;
-      const revealInterval = setInterval(() => {
+      currentLectureInterval = setInterval(() => {
         if (currentStep < steps.length) {
           const stepEl = document.createElement('div');
           stepEl.classList.add('step', 'visible');
@@ -887,7 +892,8 @@ if (absences >= 4) {
           MathJax.typesetPromise([stepEl]);
           currentStep++;
         } else {
-          clearInterval(revealInterval);
+          clearInterval(currentLectureInterval);
+          currentLectureInterval = null;
           const finalEl = document.createElement('div');
           finalEl.classList.add('step', 'final-grade', 'visible');
           finalEl.innerHTML = `Your Final Lecture Grade: ${prelimGrade.toFixed(1)}`;
@@ -950,19 +956,23 @@ if (absences >= 4) {
       setValue('lab-mp3', getRandomInt(0, 100));
       setValue('lab-mp3d', getRandomInt(0, 100));
       const labCheckboxes = [
-  "lab-attendance-jan27",
-  "lab-attendance-feb03",
-  "lab-attendance-feb10",
-  "lab-attendance-feb17"
-];
-let absencesCount = getRandomInt(0, 3);
-let shuffledLab = labCheckboxes.sort(() => 0.5 - Math.random());
-shuffledLab.forEach((id, index) => {
-  document.getElementById(id).checked = (index < absencesCount ? false : true);
-});
-
+        "lab-attendance-jan27",
+        "lab-attendance-feb03",
+        "lab-attendance-feb10",
+        "lab-attendance-feb17"
+      ];
+      let absencesCount = getRandomInt(0, 3);
+      let shuffledLab = labCheckboxes.sort(() => 0.5 - Math.random());
+      shuffledLab.forEach((id, index) => {
+        document.getElementById(id).checked = (index < absencesCount ? false : true);
+      });
     }
     function calculateLabGrade() {
+      // Clear any existing interval to avoid multiple outputs
+      if (currentLabInterval !== null) {
+        clearInterval(currentLabInterval);
+        currentLabInterval = null;
+      }
       document.getElementById('error-lab').innerHTML = '';
       const stepContainer = document.getElementById('steps-lab');
       stepContainer.style.display = 'none';
@@ -985,21 +995,20 @@ shuffledLab.forEach((id, index) => {
       const mp3 = parseFloat(document.getElementById('lab-mp3').value);
       const mp3d = parseFloat(document.getElementById('lab-mp3d').value);
       const labAttendanceCheckboxes = [
-  "lab-attendance-jan27",
-  "lab-attendance-feb03",
-  "lab-attendance-feb10",
-  "lab-attendance-feb17"
-];
-const absences = labAttendanceCheckboxes.reduce((acc, id) => {
-  return acc + (document.getElementById(id).checked ? 0 : 1);
-}, 0);
-
-if (absences >= 4) {
-  const failStamp = createStamp(0);
-  document.getElementById('error-lab').innerHTML = '<ul><li>FAIL: Absences are 4 or more.</li></ul>';
-  document.getElementById('error-lab').appendChild(failStamp);
-  return;
-}
+        "lab-attendance-jan27",
+        "lab-attendance-feb03",
+        "lab-attendance-feb10",
+        "lab-attendance-feb17"
+      ];
+      const absences = labAttendanceCheckboxes.reduce((acc, id) => {
+        return acc + (document.getElementById(id).checked ? 0 : 1);
+      }, 0);
+      if (absences >= 4) {
+        const failStamp = createStamp(0);
+        document.getElementById('error-lab').innerHTML = '<ul><li>FAIL: Absences are 4 or more.</li></ul>';
+        document.getElementById('error-lab').appendChild(failStamp);
+        return;
+      }
       const labExam = (java1 * 0.20) + (java2 * 0.30) + (js1 * 0.20) + (js2 * 0.30);
       const labWork = (mp1 + mp2 + mp3 + mp3d) / 4;
       const attendance = Math.max(100 - (absences * 10), 0);
@@ -1026,7 +1035,7 @@ if (absences >= 4) {
       ];
       stepContainer.style.display = 'block';
       let currentStep = 0;
-      const revealInterval = setInterval(() => {
+      currentLabInterval = setInterval(() => {
         if (currentStep < steps.length) {
           const stepEl = document.createElement('div');
           stepEl.classList.add('step', 'visible');
@@ -1035,7 +1044,8 @@ if (absences >= 4) {
           MathJax.typesetPromise([stepEl]);
           currentStep++;
         } else {
-          clearInterval(revealInterval);
+          clearInterval(currentLabInterval);
+          currentLabInterval = null;
           const finalEl = document.createElement('div');
           finalEl.classList.add('step', 'final-grade', 'visible');
           finalEl.innerHTML = `Your Final Lab Grade: ${labGrade.toFixed(1)}`;
@@ -1057,58 +1067,45 @@ if (absences >= 4) {
     /***********************************************************
      *                   INITIALIZE DOWNLOAD
      ***********************************************************/
-     function downloadLectureCSV() {
-  // Pull values from input fields
-  const exam = document.getElementById('lec-exam').value;
-  const essay = document.getElementById('lec-essay').value;
-  const pvm = document.getElementById('lec-pvm').value;
-  const java = document.getElementById('lec-java').value;
-  const js = document.getElementById('lec-js').value;
-  
-  // Create CSV content (without the absence field)
-  const headers = ['exam', 'essay', 'pvm', 'java', 'js'];
-  const row = [exam, essay, pvm, java, js];
-  const csvContent = headers.join(",") + "\n" + row.join(",");
-  
-  // Generate a CSV file and trigger download as "lecture-grade.csv"
-  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "lecture-grade.csv";
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-}
-function downloadLabCSV() {
-  // Get the lab grade values from inputs
-  const java1 = document.getElementById('lab-java1').value;
-  const java2 = document.getElementById('lab-java2').value;
-  const js1 = document.getElementById('lab-js1').value;
-  const js2 = document.getElementById('lab-js2').value;
-  const mp1 = document.getElementById('lab-mp1').value;
-  const mp2 = document.getElementById('lab-mp2').value;
-  const mp3 = document.getElementById('lab-mp3').value;
-  const mp3d = document.getElementById('lab-mp3d').value;
-  
-  // Create CSV content without the absence field
-  const headers = ['java1', 'java2', 'js1', 'js2', 'mp1', 'mp2', 'mp3', 'mp3d'];
-  const row = [java1, java2, js1, js2, mp1, mp2, mp3, mp3d];
-  const csvContent = headers.join(",") + "\n" + row.join(",");
-  
-  // Create a Blob and trigger the download as "lab-grade.csv"
-  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "lab-grade.csv";
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-}
-
-
-
+    function downloadLectureCSV() {
+      const exam = document.getElementById('lec-exam').value;
+      const essay = document.getElementById('lec-essay').value;
+      const pvm = document.getElementById('lec-pvm').value;
+      const java = document.getElementById('lec-java').value;
+      const js = document.getElementById('lec-js').value;
+      const headers = ['exam', 'essay', 'pvm', 'java', 'js'];
+      const row = [exam, essay, pvm, java, js];
+      const csvContent = headers.join(",") + "\n" + row.join(",");
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "lecture-grade.csv";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+    function downloadLabCSV() {
+      const java1 = document.getElementById('lab-java1').value;
+      const java2 = document.getElementById('lab-java2').value;
+      const js1 = document.getElementById('lab-js1').value;
+      const js2 = document.getElementById('lab-js2').value;
+      const mp1 = document.getElementById('lab-mp1').value;
+      const mp2 = document.getElementById('lab-mp2').value;
+      const mp3 = document.getElementById('lab-mp3').value;
+      const mp3d = document.getElementById('lab-mp3d').value;
+      const headers = ['java1', 'java2', 'js1', 'js2', 'mp1', 'mp2', 'mp3', 'mp3d'];
+      const row = [java1, java2, js1, js2, mp1, mp2, mp3, mp3d];
+      const csvContent = headers.join(",") + "\n" + row.join(",");
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "lab-grade.csv";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
   </script>
 </body>
 </html>

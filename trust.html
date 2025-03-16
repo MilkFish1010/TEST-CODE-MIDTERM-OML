@@ -362,11 +362,41 @@
       background-color: #337730;
       border-radius: 55px;
     }
+    .reset-btn {
+      display: inline-block;
+      padding: 10px 20px;
+      background-color: #295829;
+      color: #1df700;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-bottom: 10px;
+    }
+    .reset-btn:hover {
+      background-color: #d67403;
+
+    }
+    .ace-btn {
+      padding: 10px 20px;
+      background-color: #f1d326;
+      color: #ee0000;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-bottom: 10px;
+      margin: auto;
+    }
+    .ace-btn:hover {
+      background-color: #d67403;
+
+    }
   </style>
 </head>
 <body>
   <h1>😋Programming 2 Prelim Grade Calculator 2025😋</h1>
-  <br>
+  <!-- Global Notification and Reset -->
+  <div id="globalNotification">calculate time!🤑</div>
+  <div id="globalActions">
+    
+  </div>
   <!-- TAB BUTTONS -->
   <div class="tab-buttons">
     <button id="tabLecture" class="active-tab" onclick="showTab('lecture')">Lecture Calculator</button>
@@ -385,7 +415,7 @@
         <hr><br>
       </div>
       <!-- Random Valid Grades (Lecture) -->
-      <button type="button" class="random-btn" onclick="setRandomValidLecture()">Random Grade Generator Button</button>
+      <button type="button" class="random-btn" onclick="setRandomValidLecture()">🎲 Random Grade Generator Button</button>
       <br><br>
       <!-- Inputs -->
       <h3>Exam</h3>
@@ -447,8 +477,12 @@
         <input type="checkbox" id="showStepsLecture" checked />
         <label for="showStepsLecture">Show Step-by-Step Calculation</label>
       </div>
+      <button class="ace-btn" onclick="perfectLectureGrade()">🌟 I aced this course!</button>
+      <br>
+      <br>
       <button class="calculate-btn" onclick="calculateLectureGrade()">Calculate Lecture Grade</button>
-      <button class="fard-btn" onclick="downloadLectureCSV()">Download Grade as CSV</button>
+      <button onclick="resetGrades()" class="reset-btn">🔁 Reset Grades</button>
+      <button class="fard-btn" onclick="downloadLectureCSV()">🔽 Download Grade as CSV</button>
       <div id="error-lecture"></div>
       <!-- Steps (Lecture) will be rendered in LaTeX -->
       <div id="steps-lecture" class="steps"></div>
@@ -467,7 +501,7 @@
         <hr><br>
       </div>
       <!-- Random Valid Grades (Lab) -->
-      <button type="button" class="random-btn" onclick="setRandomValidLab()">Random Grade Generator Button</button>
+      <button type="button" class="random-btn" onclick="setRandomValidLab()">🎲 Random Grade Generator Button</button>
       <br><br>
       <!-- Inputs -->
       <div class="input-group">
@@ -550,44 +584,15 @@
       <div class="toggle-container">
         <input type="checkbox" id="showStepsLab" checked />
         <label for="showStepsLab">Show Step-by-Step Calculation</label>
-      </div>
-      <div id="notification" style="display: none; text-align: center; font-size: 20px; font-weight: bold; padding: 10px; background-color: gold;">
-        Calculate Time! 🤑
-    </div>
-    <button onclick="makePerfect()">Make It Perfect</button>
-    <button onclick="resetGrades()">Reset Grades</button>
-    <button onclick="calculate()">Calculate</button>
-    <canvas id="confetti-canvas"></canvas>
-      <button class="calculate-btn" onclick="calculateLabGrade()">Calculate Lab Grade</button>
+      </div><button class="ace-btn" onclick="perfectLabGrade()">🌟 I aced this course!</button>
+      <br>
+      <br>
+      <button class="calculate-btn" onclick="calculateLabGrade()">🧮 Calculate Lab Grade</button>
+      <button onclick="resetGrades()" class="reset-btn">🔁 Reset Grades</button>
       <div id="error-lab"></div>
-      <button class="fard-btn" onclick="downloadLabCSV()">Download Grade as CSV</button>
+      <button class="fard-btn" onclick="downloadLabCSV()">🔽 Download Grade as CSV</button>
       <!-- Steps (Lab) will be rendered in LaTeX -->
       <div id="steps-lab" class="steps"></div>
-    </div>
-  </div>
-  <div class="description-sidebar">
-    <!-- Lecture Image -->
-    <img src="lecture-formula.png" alt="Lecture Grade Formula" class="sidebar-image active" id="lecture-image">
-    <!-- Lab Image -->
-    <img src="lab-formula.png" alt="Lab Grade Formula" class="sidebar-image" id="lab-image">
-    <div class="instructions" style="text-align: center;">
-      <br>
-      <h3 style="text-align: center;">Grade Formula</h3>
-      <hr><br>
-      <h3 style="text-align: center;">Instructions</h3>
-      <p>🔃Select between Lecture or Lab calculator using tabs
-        <br><br>
-        ⚖ Enter scores in all required fields
-        <br><br>
-        🌟 Use Perfect Score buttons to fill max values
-        <br><br>
-        🎲 Random button generates sample valid scores
-        <br><br>
-        📁 CSV upload accepts properly formatted grade files
-        <br><br>
-        ➗ Toggle step-by-step calculation as needed</p>
-      <div id="lecture-desc"></div>
-      <div id="lab-desc" style="display: none;"></div>
     </div>
   </div>
   <script>
@@ -662,6 +667,15 @@
         stamp.textContent = 'FAIL';
       }
       return stamp;
+    }
+    
+    function showNotification() {
+      const notification = document.getElementById('globalNotification');
+      notification.style.display = 'block';
+      confetti();
+      setTimeout(() => {
+        notification.style.display = 'none';
+      }, 3000);
     }
 
     /***********************************************************
@@ -830,6 +844,10 @@
         document.getElementById('error-lecture').innerHTML = errHTML;
         return;
       }
+      
+      // Show notification and confetti
+      showNotification();
+      
       const exam = parseFloat(document.getElementById('lec-exam').value);
       const essay = parseFloat(document.getElementById('lec-essay').value);
       const pvm = parseFloat(document.getElementById('lec-pvm').value);
@@ -876,10 +894,10 @@
         `\\( \\text{PVM: } \\frac{${pvm}}{60} \\times 100 = ${pvmPercent.toFixed(2)}\\% \\)`,
         `\\( \\text{Java: } \\frac{${java}}{40} \\times 100 = ${javaPercent.toFixed(2)}\\% \\)`,
         `\\( \\text{JS: } \\frac{${js}}{40} \\times 100 = ${jsPercent.toFixed(2)}\\% \\)`,
-        `\\( \\text{Average Quizzes: } \\frac{${essayPercent.toFixed(2)} + ${pvmPercent.toFixed(2)} + ${javaPercent.toFixed(2)} + ${jsPercent.toFixed(2)}}{4} = ${prelimQuizzes.toFixed(2)}\\% \\)`,
+        `\\( \\text{Average Quizzes: } \\frac{${essayPercent.toFixed(2)}(essay) + ${pvmPercent.toFixed(2)}(PVM) + ${javaPercent.toFixed(2)}(Java) + ${jsPercent.toFixed(2)}(JS)}{4} = ${prelimQuizzes.toFixed(2)}\\% \\)`,
         `\\( \\text{Attendance: } 100 - (${absences} \\times 10) = ${attendance.toFixed(2)}\\% \\)`,
-        `\\( \\text{Prelim Class Standing: } (${prelimQuizzes.toFixed(2)}\\% \\times 0.60) + (${attendance.toFixed(2)}\\% \\times 0.40) = ${prelimClassStanding.toFixed(2)}\\% \\)`,
-        `\\( \\text{Final Grade: } (${exam} \\times 0.60) + (${prelimClassStanding.toFixed(2)}\\% \\times 0.40) = ${prelimGrade.toFixed(2)} \\)`
+        `\\( \\text{Prelim Class Standing: } (${prelimQuizzes.toFixed(2)}\\% \\times 0.60)Quizzes + (${attendance.toFixed(2)}\\% \\times 0.40)Attendance = ${prelimClassStanding.toFixed(2)}\\% \\)`,
+        `\\( \\text{Final Grade: } (${exam} \\times 0.60)Exam + (${prelimClassStanding.toFixed(2)}\\% \\times 0.40)ClassStanding = ${prelimGrade.toFixed(2)} \\)`
       ];
       stepContainer.style.display = 'block';
       let currentStep = 0;
@@ -986,6 +1004,10 @@
         document.getElementById('error-lab').innerHTML = errHTML;
         return;
       }
+      
+      // Show notification and confetti
+      showNotification();
+      
       const java1 = parseFloat(document.getElementById('lab-java1').value);
       const java2 = parseFloat(document.getElementById('lab-java2').value);
       const js1 = parseFloat(document.getElementById('lab-js1').value);
@@ -1027,11 +1049,11 @@
         return;
       }
       const steps = [
-        `\\( \\text{Prelim Exam: } (${java1} \\times 0.20) + (${java2} \\times 0.30) + (${js1} \\times 0.20) + (${js2} \\times 0.30) = ${labExam.toFixed(2)} \\)`,
+        `\\( \\text{Prelim Exam: } (${java1} \\times 0.20)Java 1 + (${java2} \\times 0.30)Java 2 + (${js1} \\times 0.20)JS 1 + (${js2} \\times 0.30)JS 2 = ${labExam.toFixed(2)} \\)`,
         `\\( \\text{Lab Work: } \\frac{${mp1} (MP1) + ${mp2} (MP2) + ${mp3} (MP3) + ${mp3d} (MP3 Doc)}{4} = ${labWork.toFixed(2)}\\% \\)`,
         `\\( \\text{Attendance: } 100 - (${absences} \\times 10) = ${attendance.toFixed(2)} \\)`,
-        `\\( \\text{Class Standing: } (${labWork.toFixed(2)} \\times 0.60) + (${attendance.toFixed(2)} \\times 0.40) = ${labClassStanding.toFixed(2)} \\)`,
-        `\\( \\text{Final Grade: } (${labExam.toFixed(2)} \\times 0.60) + (${labClassStanding.toFixed(2)} \\times 0.40) = ${labGrade.toFixed(2)} \\)`
+        `\\( \\text{Class Standing: } (${labWork.toFixed(2)} \\times 0.60)LabWork + (${attendance.toFixed(2)} \\times 0.40)Attendace = ${labClassStanding.toFixed(2)} \\)`,
+        `\\( \\text{Final Grade: } (${labExam.toFixed(2)} \\times 0.60)Exams + (${labClassStanding.toFixed(2)} \\times 0.40)ClassStanding = ${labGrade.toFixed(2)} \\)`
       ];
       stepContainer.style.display = 'block';
       let currentStep = 0;
@@ -1062,6 +1084,73 @@
           MathJax.typesetPromise([finalEl]);
         }
       }, 1500);
+    }
+
+    /***********************************************************
+     *           PERFECT GRADE & RESET FUNCTIONS
+     ***********************************************************/
+    function perfectLectureGrade() {
+      // Set perfect scores for lecture
+      setPerfect('lec-exam', 100);
+      setPerfect('lec-essay', 100);
+      setPerfect('lec-pvm', 60);
+      setPerfect('lec-java', 40);
+      setPerfect('lec-js', 40);
+      // Check all attendance checkboxes for lecture
+      document.getElementById('lec-attendance-jan27').checked = true;
+      document.getElementById('lec-attendance-feb03').checked = true;
+      document.getElementById('lec-attendance-feb10').checked = true;
+      document.getElementById('lec-attendance-feb17').checked = true;
+      calculateLectureGrade();
+    }
+    function perfectLabGrade() {
+      // Set perfect scores for lab
+      setPerfect('lab-java1', 100);
+      setPerfect('lab-java2', 100);
+      setPerfect('lab-js1', 100);
+      setPerfect('lab-js2', 100);
+      setPerfect('lab-mp1', 100);
+      setPerfect('lab-mp2', 100);
+      setPerfect('lab-mp3', 100);
+      setPerfect('lab-mp3d', 100);
+      // Check all attendance checkboxes for lab
+      document.getElementById('lab-attendance-jan27').checked = true;
+      document.getElementById('lab-attendance-feb03').checked = true;
+      document.getElementById('lab-attendance-feb10').checked = true;
+      document.getElementById('lab-attendance-feb17').checked = true;
+      calculateLabGrade();
+    }
+    function resetGrades() {
+      // Reset lecture fields
+      document.getElementById('lec-exam').value = '';
+      document.getElementById('lec-essay').value = '';
+      document.getElementById('lec-pvm').value = '';
+      document.getElementById('lec-java').value = '';
+      document.getElementById('lec-js').value = '';
+      document.getElementById('lec-attendance-jan27').checked = true;
+      document.getElementById('lec-attendance-feb03').checked = true;
+      document.getElementById('lec-attendance-feb10').checked = true;
+      document.getElementById('lec-attendance-feb17').checked = true;
+      document.getElementById('error-lecture').innerHTML = '';
+      document.getElementById('steps-lecture').innerHTML = '';
+      document.getElementById('steps-lecture').style.display = 'none';
+
+      // Reset lab fields
+      document.getElementById('lab-java1').value = '';
+      document.getElementById('lab-java2').value = '';
+      document.getElementById('lab-js1').value = '';
+      document.getElementById('lab-js2').value = '';
+      document.getElementById('lab-mp1').value = '';
+      document.getElementById('lab-mp2').value = '';
+      document.getElementById('lab-mp3').value = '';
+      document.getElementById('lab-mp3d').value = '';
+      document.getElementById('lab-attendance-jan27').checked = true;
+      document.getElementById('lab-attendance-feb03').checked = true;
+      document.getElementById('lab-attendance-feb10').checked = true;
+      document.getElementById('lab-attendance-feb17').checked = true;
+      document.getElementById('error-lab').innerHTML = '';
+      document.getElementById('steps-lab').innerHTML = '';
+      document.getElementById('steps-lab').style.display = 'none';
     }
 
     /***********************************************************
@@ -1107,5 +1196,30 @@
       document.body.removeChild(a);
     }
   </script>
+  <div class="description-sidebar">
+    <!-- Lecture Image -->
+    <img src="lecture-formula.png" alt="Lecture Grade Formula" class="sidebar-image active" id="lecture-image">
+    <!-- Lab Image -->
+    <img src="lab-formula.png" alt="Lab Grade Formula" class="sidebar-image" id="lab-image">
+    <div class="instructions" style="text-align: center;">
+      <br>
+      <h3 style="text-align: center;">Grade Formula</h3>
+      <hr><br>
+      <h3 style="text-align: center;">Instructions</h3>
+      <p>🔃Select between Lecture or Lab calculator using tabs
+        <br><br>
+        ⚖ Enter scores in all required fields
+        <br><br>
+        🌟 Use Perfect Score buttons to fill max values
+        <br><br>
+        🎲 Random button generates sample valid scores
+        <br><br>
+        📁 CSV upload accepts properly formatted grade files
+        <br><br>
+        ➗ Toggle step-by-step calculation as needed</p>
+      <div id="lecture-desc"></div>
+      <div id="lab-desc" style="display: none;"></div>
+    </div>
+  </div>
 </body>
 </html>

@@ -15,7 +15,7 @@ public class GradeCalculatorFrame extends JFrame {
     private JTextField lecExamField, lecEssayField, lecPvmField, lecJavaField, lecJsField;
     private JCheckBox lecAttendanceJan, lecAttendanceFeb3, lecAttendanceFeb10, lecAttendanceFeb17;
     private JCheckBox lecShowSteps;
-    // Use a JTextPane (HTML) for output instead of JTextArea
+    // Use a JTextPane (HTML) for output
     private JTextPane lecStepPane;
     private JLabel lecErrorLabel;
 
@@ -148,7 +148,7 @@ public class GradeCalculatorFrame extends JFrame {
         contentPanel.add(lecErrorLabel);
         contentPanel.add(Box.createVerticalStrut(10));
 
-        // Use a JTextPane for HTML output (for larger, formatted text)
+        // Use a JTextPane for HTML output
         lecStepPane = new JTextPane();
         lecStepPane.setContentType("text/html");
         lecStepPane.setEditable(false);
@@ -265,7 +265,6 @@ public class GradeCalculatorFrame extends JFrame {
     }
 
     // ------------------ Utility Methods --------------------
-
     // Create a panel with a label, text field and a "Perfect Score" button.
     private JTextField createLabeledField(JPanel parent, String labelText, int maxScore) {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER));
@@ -364,7 +363,15 @@ public class GradeCalculatorFrame extends JFrame {
         double prelimClassStanding = (avgQuizzes * 0.60) + (attendance * 0.40);
         double prelimGrade = (exam * 0.60) + (prelimClassStanding * 0.40);
 
-        // Detailed steps with explicit intermediate values
+        // Create a stamp: if grade >=75 then PASSED (green), otherwise FAILED (red)
+        String stamp;
+        if (prelimGrade >= 75) {
+            stamp = "<span style='display:inline-block; margin-left:10px; font-weight:bold; color:#28a745; border:2px solid #28a745; border-radius:5px; padding:5px;'>PASSED</span>";
+        } else {
+            stamp = "<span style='display:inline-block; margin-left:10px; font-weight:bold; color:#dc3545; border:2px solid #dc3545; border-radius:5px; padding:5px;'>FAILED</span>";
+        }
+
+        // Build detailed HTML output
         StringBuilder html = new StringBuilder("<html><body style='font-size:18pt; font-family: monospace;'>");
         html.append("<b>Quiz Calculations:</b><br>");
         html.append("Essay: (").append(essay).append("/100)*100 = ").append(String.format("%.2f", essayPercent)).append("%<br>");
@@ -379,18 +386,20 @@ public class GradeCalculatorFrame extends JFrame {
 
         html.append("<b>Prelim Class Standing:</b><br>");
         html.append("= (Average Quizzes * 0.60) + (Attendance * 0.40)<br>");
-        html.append("= (").append(String.format("%.2f", avgQuizzes)).append(" * 0.60) + (").append(String.format("%.2f", attendance)).append(" * 0.40) = ")
-            .append(String.format("%.2f", prelimClassStanding)).append("%<br><br>");
+        html.append("= (").append(String.format("%.2f", avgQuizzes)).append(" * 0.60) + (").append(String.format("%.2f", attendance))
+            .append(" * 0.40) = ").append(String.format("%.2f", prelimClassStanding)).append("%<br><br>");
 
         html.append("<b>Final Lecture Grade:</b><br>");
         html.append("= (Exam * 0.60) + (Prelim Class Standing * 0.40)<br>");
         html.append("= (").append(exam).append(" * 0.60) + (").append(String.format("%.2f", prelimClassStanding))
-            .append(" * 0.40) = ").append(String.format("%.2f", prelimGrade)).append("<br>");
+            .append(" * 0.40) = ").append(String.format("%.2f", prelimGrade)).append("%<br>");
         if (prelimGrade % 1 != 0) {
             int roundUp = (int) Math.ceil(prelimGrade);
             int roundDown = (int) Math.floor(prelimGrade);
             html.append("Rounded Up: ").append(roundUp).append(", Rounded Down: ").append(roundDown).append("<br>");
         }
+        // Append the stamp
+        html.append(stamp);
         html.append("</body></html>");
         lecStepPane.setText(html.toString());
         showNotification("calculate time!🤑");
@@ -500,7 +509,6 @@ public class GradeCalculatorFrame extends JFrame {
             }
         }
     }
-    
 
     // ----------------- Lab Functionality -----------------
     private List<String> validateLab() {
@@ -577,7 +585,14 @@ public class GradeCalculatorFrame extends JFrame {
         double labClassStanding = (labWork * 0.60) + (attendance * 0.40);
         double labGrade = (labExam * 0.60) + (labClassStanding * 0.40);
 
-        // Detailed steps for lab calculations
+        // Create stamp for lab grade
+        String stamp;
+        if (labGrade >= 75) {
+            stamp = "<span style='display:inline-block; margin-left:10px; font-weight:bold; color:#28a745; border:2px solid #28a745; border-radius:5px; padding:5px;'>PASSED</span>";
+        } else {
+            stamp = "<span style='display:inline-block; margin-left:10px; font-weight:bold; color:#dc3545; border:2px solid #dc3545; border-radius:5px; padding:5px;'>FAILED</span>";
+        }
+
         StringBuilder html = new StringBuilder("<html><body style='font-size:18pt; font-family: monospace;'>");
         html.append("<b>Lab Exam Calculation:</b><br>");
         html.append("Java 1 Contribution: ").append(String.format("%.2f", java1 * 0.20)).append("<br>");
@@ -607,6 +622,7 @@ public class GradeCalculatorFrame extends JFrame {
             int roundDown = (int) Math.floor(labGrade);
             html.append("Rounded Up: ").append(roundUp).append(", Rounded Down: ").append(roundDown).append("<br>");
         }
+        html.append(stamp);
         html.append("</body></html>");
         labStepPane.setText(html.toString());
         showNotification("calculate time!🤑");
@@ -732,7 +748,6 @@ public class GradeCalculatorFrame extends JFrame {
             }
         }
     }
-    
 
     // -------------------- Main Method --------------------
     public static void main(String[] args) {
